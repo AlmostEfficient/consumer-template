@@ -8,9 +8,9 @@ export default function WalletScreen() {
 	const [userInfo, setUserInfo] = useState<MagicUserMetadata | null>(null);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-	// useEffect(() => {
-	// 	checkLoginStatus();
-	// }, []);
+	useEffect(() => {
+		checkLoginStatus();
+	}, []);
 
 	const checkLoginStatus = async () => {
 		const loggedIn = await magic.user.isLoggedIn();
@@ -35,6 +35,17 @@ export default function WalletScreen() {
 		}
 	};
 
+	const handleLogout = async () => {
+		try {
+			await magic.user.logout();
+			setIsLoggedIn(false);
+			setUserInfo(null);
+			console.log('User logged out');
+		} catch (error) {
+			console.error('Error logging out:', error);
+		}
+	};
+
 	return (
 		<ScrollView contentContainerStyle={styles.container}>
 			{isLoggedIn ? (
@@ -53,6 +64,10 @@ export default function WalletScreen() {
 					<Button
 						title="Show address"
 						onPress={showAddress}
+					/>
+					<Button
+						title="Logout"
+						onPress={handleLogout}
 					/>
 				</>
 			) : (

@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Animated, StyleSheet, View } from "react-native";
 import { Asset } from "expo-asset";
 import Constants from "expo-constants";
-import * as splash from "expo-splash-screen";
+import * as SplashScreen from "expo-splash-screen";
 
 // Prevent the splash screen from auto-hiding
-splash.preventAutoHideAsync().catch(() => {
+SplashScreen.preventAutoHideAsync().catch(() => {
   /* reloading the app might trigger some race conditions, ignore them */
 });
 
@@ -13,7 +13,7 @@ interface SplashScreenProps {
   children: React.ReactNode;
 }
 
-export function SplashScreen({ children }: SplashScreenProps) {
+export function Splash({ children }: SplashScreenProps) {
   return (
     <AnimatedAppLoader image={require("../assets/images/splash.png")}>
       {children}
@@ -48,7 +48,7 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
     if (isAppReady) {
       Animated.timing(animation, {
         toValue: 0,
-        duration: 1000,
+        duration: 100,
         useNativeDriver: true,
       }).start(() => setAnimationComplete(true));
     }
@@ -56,11 +56,9 @@ function AnimatedSplashScreen({ children, image }: { children: React.ReactNode; 
 
   const onImageLoaded = useCallback(async () => {
     try {
-      await splash.hideAsync();
-      // Load stuff
+      await SplashScreen.hideAsync();
       await Promise.all([]);
     } catch (e) {
-      // handle errors
     } finally {
       setAppReady(true);
     }

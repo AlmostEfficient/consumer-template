@@ -1,30 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, Button, StyleSheet } from 'react-native';
 import { magic } from '../../config/magic';
 
 export default function Index() {
-	const [email, setEmail] = useState('');
-	const [isLoading, setIsLoading] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-	const handleLogin = async () => {
-		if (!email) {
-			Alert.alert('Error', 'Please enter your email address');
-			return;
-		}
-
-		setIsLoading(true);
-		try {
-			await magic.auth.loginWithEmailOTP({ email });
-			console.log('Logged in');
-		} catch (error) {
-			console.error('Login error:', error);
-			Alert.alert('Error', 'An error occurred during login. Please try again.');
-		} finally {
-			setIsLoading(false);
-		}
-	};
 
 	const fetchUser = async () => {
 		const isLoggedIn = await magic.user.isLoggedIn();
@@ -34,24 +13,9 @@ export default function Index() {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Login with magic link</Text>
-			<TextInput
-				style={styles.input}
-				placeholder="bob@gmail.com"
-				value={email}
-				onChangeText={setEmail}
-				keyboardType="email-address"
-				editable={!isLoading}
-			/>
-			<Button
-				title={isLoading ? 'Logging in...' : 'Login with Magic Link'}
-				onPress={handleLogin}
-				disabled={isLoading}
-			/>
-
 			{/* Display user info */}
 			<Button
-				title="Fetch User"
+				title="Fetch login status"
 				onPress={fetchUser}
 			/>
 			<Text>{isLoggedIn ? 'Logged in' : 'Not logged in'}</Text>

@@ -52,7 +52,8 @@ Join our community of developers creating universal apps.
 ## Structure
 
 magic-link-template
-│   .gitignore
+│   .env
+|   .gitignore
 │   app.json
 │   babel.config.js
 │   bun.lockb
@@ -61,19 +62,14 @@ magic-link-template
 │   README.md
 │   tsconfig.json
 ├───app
-| 	| _layout.tsx
-| 	| +not-found.tsx
-│   └───(tabs)
-│          _layout.tsx
-│          wallet.tsx
-│          index.tsx
-├───app-example
-│   │   +html.tsx
 │   │   +not-found.tsx
 │   │   _layout.tsx
+│   ├───(auth)
+│   │       login.tsx
+│   │       signup.tsx
 │   └───(tabs)
-│           explore.tsx
 │           index.tsx
+│           wallet.tsx
 │           _layout.tsx
 ├───assets
 │   ├───fonts

@@ -61,6 +61,13 @@ magic-link-template
 │   README.md
 │   tsconfig.json
 ├───app
+| 	| _layout.tsx
+| 	| +not-found.tsx
+│   └───(tabs)
+│          _layout.tsx
+│          wallet.tsx
+│          index.tsx
+├───app-example
 │   │   +html.tsx
 │   │   +not-found.tsx
 │   │   _layout.tsx

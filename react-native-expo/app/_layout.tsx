@@ -15,9 +15,8 @@ export default function RootLayout() {
   useEffect(() => {
     async function prepare() {
       try {
-        const value = await AsyncStorage.getItem('hasLaunchedBefore');
+        const value = await AsyncStorage.getItem('hasOnboarded');
         if (value === null) {
-          await AsyncStorage.setItem('hasLaunchedBefore', 'true');
           setIsFirstLaunch(true);
         } else {
           setIsFirstLaunch(false);
@@ -46,12 +45,13 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <magic.Relayer />
-      <Stack>
+      <Stack screenOptions={{ headerShown: false }}>
         {isFirstLaunch ? (
-          <Stack.Screen name="(onboarding)/index" options={{ headerShown: false }} />
+          <Stack.Screen name="(onboarding)/index" />
         ) : (
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)"/>
         )}
+				<Stack.Screen name="(auth)/login"  />
         <Stack.Screen name="+not-found" />
       </Stack>
     </SafeAreaProvider>

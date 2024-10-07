@@ -85,7 +85,6 @@ export default function WalletScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flexGrow: 1,
-		backgroundColor: '#25292e',
 		justifyContent: 'center',
 		alignItems: 'center',
 		padding: 20,
@@ -93,11 +92,9 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 24,
 		fontWeight: 'bold',
-		color: '#fff',
 		marginBottom: 20,
 	},
 	text: {
-		color: '#fff',
 		marginBottom: 10,
 	},
 	infoContainer: {

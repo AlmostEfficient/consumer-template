@@ -7,13 +7,13 @@ export default function RootLayout() {
 	return (
 		<SafeAreaProvider>
 			<magic.Relayer />
-      <Stack 
+			<Stack
 				screenOptions={{ headerShown: false }}>
-				<Stack.Screen name="(tabs)"/>
+				<Stack.Screen name="(tabs)" />
 				<Stack.Screen name="onboarding" />
 				<Stack.Screen name="(auth)/login" />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </SafeAreaProvider>
-  );
+				<Stack.Screen name="+not-found" />
+			</Stack>
+		</SafeAreaProvider>
+	);
 }

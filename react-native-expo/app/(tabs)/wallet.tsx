@@ -24,7 +24,7 @@ export default function WalletScreen() {
 		const address = await magic.wallet.showAddress();
 		console.log('Address:', address);
 	};
-	
+
 	const fetchUserInfo = async () => {
 		try {
 			const info = await magic.user.getInfo();

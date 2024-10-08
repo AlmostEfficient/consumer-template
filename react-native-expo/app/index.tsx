@@ -6,22 +6,22 @@ import * as SplashScreen from "expo-splash-screen"
 SplashScreen.preventAutoHideAsync();
 
 export default function AppEntry() {
-  const router = useRouter();
+	const router = useRouter();
 	const [appIsReady, setAppIsReady] = useState(false);
 
-  useEffect(() => {
-    const checkOnboarding = async () => {
-      const hasOnboarded = await getItem('hasOnboarded');
-      if (hasOnboarded === 'true') {
+	useEffect(() => {
+		const checkOnboarding = async () => {
+			const hasOnboarded = await getItem('hasOnboarded');
+			if (hasOnboarded === 'true') {
 				router.replace('/(tabs)');
-      } else {
-        router.replace('/onboarding');
-      }
+			} else {
+				router.replace('/onboarding');
+			}
 			setAppIsReady(true);
-    };
+		};
 
-    checkOnboarding();
-  }, []);
+		checkOnboarding();
+	}, []);
 
 	useEffect(() => {
 		if (appIsReady) {
@@ -29,5 +29,5 @@ export default function AppEntry() {
 		}
 	}, [appIsReady]);
 
-  return null;
+	return null;
 }

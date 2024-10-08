@@ -11,31 +11,31 @@ export default function Index() {
 	const router = useRouter();
 
 	useEffect(() => {
-    const initializeOnboarding = async (): Promise<void> => {
-      try {
-        const [notificationsPerms, notificationStatus, hasOnboarded, inviteStatus, isLoggedIn] = await Promise.all([
+		const initializeOnboarding = async (): Promise<void> => {
+			try {
+				const [notificationsPerms, notificationStatus, hasOnboarded, inviteStatus, isLoggedIn] = await Promise.all([
 					Notifications.getPermissionsAsync(),
-          getItem('notificationStatus'),
-          getItem('hasOnboarded'),
+					getItem('notificationStatus'),
+					getItem('hasOnboarded'),
 					getItem('inviteStatus'),
-          magic.user.isLoggedIn(),
-        ]);
+					magic.user.isLoggedIn(),
+				]);
 
 				if (hasOnboarded === 'true') {
 					router.replace('/(auth)/login');
 					return;
 				}
-				
-        if (isLoggedIn) {
+
+				if (isLoggedIn) {
 					router.replace('/(tabs)');
-          return;
-        }
-				
-				// TODO: fetch notificationsPerms during splash screen so there's no delay in page transition
-        if (notificationsPerms.granted === true || notificationStatus !== null) {
-          setCurrentPage(1);
 					return;
-        }
+				}
+
+				// TODO: fetch notificationsPerms during splash screen so there's no delay in page transition
+				if (notificationsPerms.granted === true || notificationStatus !== null) {
+					setCurrentPage(1);
+					return;
+				}
 
 				if (inviteStatus) {
 					setCurrentPage(2);
@@ -43,61 +43,61 @@ export default function Index() {
 				}
 
 				setCurrentPage(0);
-      } catch (error) {
-        console.error('Initialization error:', error);
-      }
-    };
+			} catch (error) {
+				console.error('Initialization error:', error);
+			}
+		};
 
-    initializeOnboarding();
-  }, [router]);
+		initializeOnboarding();
+	}, [router]);
 
 
 	const requestNotificationPermission = async () => {
-    try {
-      const { status } = await Notifications.requestPermissionsAsync();
-      await setItem('notificationStatus', status);
+		try {
+			const { status } = await Notifications.requestPermissionsAsync();
+			await setItem('notificationStatus', status);
 			setCurrentPage(1);
-    } catch (error) {
-      console.error('Notification permission error:', error);
-    }
-  };
+		} catch (error) {
+			console.error('Notification permission error:', error);
+		}
+	};
 
-  const inviteFriends = async () => {
-    try {
-      await Share.share({
-        message: 'Buy my bags! yourlinkhere.com/refer?=123456',
-      });
-      navigateNext();
-    } catch (error) {
-      console.error('Share error:', error);
-    }
-  };
+	const inviteFriends = async () => {
+		try {
+			await Share.share({
+				message: 'Buy my bags! yourlinkhere.com/refer?=123456',
+			});
+			navigateNext();
+		} catch (error) {
+			console.error('Share error:', error);
+		}
+	};
 
-  const createAccount = async () => {
-    router.replace('/(auth)/login');
-  };
+	const createAccount = async () => {
+		router.replace('/(auth)/login');
+	};
 
 	const navigateNext = async () => {
-    try {
-      if (currentPage === 0) {
-        await setItem('notificationStatus', 'skipped');
-      }
+		try {
+			if (currentPage === 0) {
+				await setItem('notificationStatus', 'skipped');
+			}
 			else if (currentPage === 1) {
 				// can't know if user has invited or not, we don't want to prompt invite again 
 				await setItem('inviteStatus', 'prompted');
 			}
 
-      const nextPage = currentPage + 1;
-      setCurrentPage(nextPage);
+			const nextPage = currentPage + 1;
+			setCurrentPage(nextPage);
 
-      if (nextPage > 2) {
-        await setItem('hasOnboarded', 'true');
-        router.replace('/(tabs)');
-      }
-    } catch (error) {
-      console.error('Navigation error:', error);
-    }
-  };
+			if (nextPage > 2) {
+				await setItem('hasOnboarded', 'true');
+				router.replace('/(tabs)');
+			}
+		} catch (error) {
+			console.error('Navigation error:', error);
+		}
+	};
 
 	const renderContent = () => {
 		switch (currentPage) {
@@ -150,91 +150,91 @@ export default function Index() {
 				return null;
 		}
 	};
-	
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
-      <View style={styles.content}>
-        {renderContent()}
-      </View>
-      <View style={styles.footer}>
-        <View style={styles.pagination}>
-          {[0, 1, 2].map((page) => (
-            <View
-              key={page}
-              style={[
-                styles.dot,
-                currentPage === page ? styles.activeDot : styles.inactiveDot,
-              ]}
-            />
-          ))}
-        </View>
-      </View>
-    </SafeAreaView>
-  );
+
+	return (
+		<SafeAreaView style={styles.container}>
+			<StatusBar style="dark" />
+			<View style={styles.content}>
+				{renderContent()}
+			</View>
+			<View style={styles.footer}>
+				<View style={styles.pagination}>
+					{[0, 1, 2].map((page) => (
+						<View
+							key={page}
+							style={[
+								styles.dot,
+								currentPage === page ? styles.activeDot : styles.inactiveDot,
+							]}
+						/>
+					))}
+				</View>
+			</View>
+		</SafeAreaView>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 40,
-  },
-  emoji: {
-    fontSize: 80,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#666',
-    marginBottom: 30,
-  },
-  footer: {
-    alignItems: 'center',
-    paddingBottom: 40,
-  },
-  pagination: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 5,
-  },
-  activeDot: {
-    backgroundColor: '#000',
-  },
-  inactiveDot: {
-    backgroundColor: '#D3D3D3',
-  },
-  button: {
-    backgroundColor: '#E600E6',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    width: '90%',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
+	container: {
+		flex: 1,
+		backgroundColor: 'white',
+	},
+	content: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		paddingHorizontal: 40,
+	},
+	emoji: {
+		fontSize: 80,
+		marginBottom: 20,
+	},
+	title: {
+		fontSize: 28,
+		fontWeight: 'bold',
+		marginBottom: 20,
+		textAlign: 'center',
+	},
+	description: {
+		fontSize: 16,
+		textAlign: 'center',
+		color: '#666',
+		marginBottom: 30,
+	},
+	footer: {
+		alignItems: 'center',
+		paddingBottom: 40,
+	},
+	pagination: {
+		flexDirection: 'row',
+		marginBottom: 20,
+	},
+	dot: {
+		width: 8,
+		height: 8,
+		borderRadius: 4,
+		marginHorizontal: 5,
+	},
+	activeDot: {
+		backgroundColor: '#000',
+	},
+	inactiveDot: {
+		backgroundColor: '#D3D3D3',
+	},
+	button: {
+		backgroundColor: '#E600E6',
+		paddingVertical: 15,
+		paddingHorizontal: 20,
+		borderRadius: 10,
+		width: '90%',
+		alignItems: 'center',
+		marginBottom: 20,
+	},
+	buttonText: {
+		color: 'white',
+		fontSize: 18,
+		fontWeight: 'bold',
+	},
 	skipButton: {
 		backgroundColor: 'transparent',
 		padding: 0,

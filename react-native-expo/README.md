@@ -64,7 +64,9 @@ magic-link-template
 ├───app
 │   │   +not-found.tsx
 │   │   _layout.tsx
+| 	| 	index.tsx
 | 	|   onboarding.tsx
+| 	|   polyfill.js
 │   ├───(auth)
 │   │       login.tsx
 │   └───(tabs)
@@ -100,6 +102,8 @@ magic-link-template
 │       magic.ts
 ├───constants
 │       Colors.ts
+├───contexts
+│       UserContext.tsx
 ├───hooks
 │       useColorScheme.ts
 │       useColorScheme.web.ts

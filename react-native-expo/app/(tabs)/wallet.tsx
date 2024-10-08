@@ -1,36 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { magic } from '../../config/magic';
-import { MagicUserMetadata } from '@magic-sdk/types';
 import { useRouter } from 'expo-router';
-import { getItem, setItem, removeItem } from '../../utils/storage';
+import { removeItem } from '../../utils/storage';
 import * as Clipboard from 'expo-clipboard';
+import { useUser } from '../../contexts/UserContext';
 
 const Wallet = () => {
 	const router = useRouter();
-  const [userMetadata, setUserMetadata] = useState<MagicUserMetadata | null>(null);
-
-  useEffect(() => {
-    fetchUserMetadata();
-  }, []);
-
-  const fetchUserMetadata = async () => {
-    try {
-      // Try to get cached metadata
-      const cachedMetadata = await getItem('userMetadata');
-      if (cachedMetadata) {
-        setUserMetadata(JSON.parse(cachedMetadata));
-      } else {
-        // If no cached data, fetch from Magic
-        const metadata = await magic.user.getInfo();
-        setUserMetadata(metadata);
-        // Cache the fetched metadata
-        await setItem('userMetadata', JSON.stringify(metadata));
-      }
-    } catch (error) {
-      console.error('Error fetching user metadata:', error);
-    }
-  };
+	const { userMetadata } = useUser();
 
   const handleCopyAddress = async () => {
     if (userMetadata?.publicAddress) {

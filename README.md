@@ -1,6 +1,22 @@
 # consumer-template
 an opinionated template for creating consumer apps on solana with ease
 
+## Cloudflare + React + Magic Link starter template
+Current status:
+- created with `bun create cloudflare@latest` -> react -> typescript
+- add all deps from [magic-app/nextjs-solana-dedicated-wallet](https://github.com/magiclabs/create-magic-app)
+- update from Next.js to Vite (imports, env, scripts)
+
+Needs:
+- D1 setup
+- AWS SES setup
+- moonpay integration for onboarding
+
+## SETUP & RUN
+- update .env.example with your keys and rename to .env
+- bun install
+- bun dev
+
 ## what's included?
 - [Cloudflare Pages](https://pages.cloudflare.com/) for the frontend w/ React
 - [Cloudflare D1](https://www.cloudflare.com/products/d1/) as a user DB

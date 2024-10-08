@@ -26,3 +26,12 @@ export const setItem = async (key: string, value: string): Promise<void> => {
     console.error(`Error setting item [${key}]:`, error);
   }
 };
+
+export const removeItem = async (key: string): Promise<void> => {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (error) {
+    console.error(`Error removing item [${key}]:`, error);
+  }
+};
+

@@ -3,22 +3,11 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import { magic } from '../../config/magic';
 
 export default function Index() {
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-	const fetchUser = async () => {
-		const isLoggedIn = await magic.user.isLoggedIn();
-		setIsLoggedIn(isLoggedIn);
-		console.log('User:', isLoggedIn);
-	};
 
 	return (
 		<View style={styles.container}>
-			{/* Display user info */}
-			<Button
-				title="Fetch login status"
-				onPress={fetchUser}
-			/>
-			<Text>{isLoggedIn ? 'Logged in' : 'Not logged in'}</Text>
+			<Text>Total Balance</Text>
+			<Text>$100.00</Text>
 		</View>
 	);
 }

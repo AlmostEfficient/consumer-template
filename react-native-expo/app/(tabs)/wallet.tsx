@@ -13,7 +13,6 @@ const Wallet = () => {
   const handleCopyAddress = async () => {
     if (userMetadata?.publicAddress) {
       await Clipboard.setStringAsync(userMetadata.publicAddress);
-      // You might want to show a toast or alert here to confirm the copy action
 			alert('Address copied to clipboard');
     }
   };

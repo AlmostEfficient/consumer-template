@@ -56,6 +56,7 @@ export default function EmailInputForm() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
+				<Text style={styles.logo}>👋</Text>
         <Text style={styles.title}>What's your email address?</Text>
         <Text style={styles.subtitle}>
           We only need your email to log you in. We keep your email private and won't send spam.
@@ -103,6 +104,10 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
   },
+	logo: {
+		fontSize: 48,
+		marginBottom: 10,
+	},
   title: {
     fontSize: 24,
     fontWeight: 'bold',

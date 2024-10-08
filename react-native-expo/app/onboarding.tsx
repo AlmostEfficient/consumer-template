@@ -3,71 +3,102 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Share } from 'r
 import { StatusBar } from 'expo-status-bar';
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { magic } from '../../config/magic';
+import { magic } from '../config/magic';
+import { getItem, setItem } from '../utils/storage';
+
 export default function Index() {
 	const [currentPage, setCurrentPage] = useState(0);
 	const router = useRouter();
 
-	// check if app has notifications permission
 	useEffect(() => {
-		async function checkNotifications() {
-			const hasPermission = await Notifications.getPermissionsAsync();
-			console.log("Notification status", hasPermission);
-			if (hasPermission.status == 'granted') {
-				setCurrentPage(1);
-			}
-		}
+    const initializeOnboarding = async (): Promise<void> => {
+      try {
+        const [notificationsPerms, notificationStatus, hasOnboarded, inviteStatus, isLoggedIn] = await Promise.all([
+					Notifications.getPermissionsAsync(),
+          getItem('notificationStatus'),
+          getItem('hasOnboarded'),
+					getItem('inviteStatus'),
+          magic.user.isLoggedIn(),
+        ]);
 
-		async function checkFirstLaunch() {
-			const hasLaunchedBefore = await AsyncStorage.getItem('hasLaunchedBefore');
-			if (hasLaunchedBefore) {
-				setCurrentPage(2);
-			}
-		}
+				if (hasOnboarded === 'true') {
+					router.replace('/(auth)/login');
+					return;
+				}
+				
+        if (isLoggedIn) {
+					router.replace('/(tabs)');
+          return;
+        }
+				
+				// TODO: fetch notificationsPerms during splash screen so there's no delay in page transition
+        if (notificationsPerms.granted === true || notificationStatus !== null) {
+          setCurrentPage(1);
+					return;
+        }
 
-		async function checkLogin() {
-			const isLoggedIn = await magic.user.isLoggedIn();
-			if (isLoggedIn) {
-				router.replace('/(tabs)');
-			}
-		}
-		checkNotifications();
-		checkFirstLaunch();
-		checkLogin();
-	}, []);
+				if (inviteStatus) {
+					setCurrentPage(2);
+					return;
+				}
 
-	
-	const handleNotificationRequest = async () => {
-		const { status } = await Notifications.getPermissionsAsync();
-		if (status !== 'granted') {
-			const { status } = await Notifications.requestPermissionsAsync();
-			if (status !== 'granted') {
-				alert('Permission for notification was denied');
+				setCurrentPage(0);
+      } catch (error) {
+        console.error('Initialization error:', error);
+      }
+    };
+
+    initializeOnboarding();
+  }, [router]);
+
+
+	const requestNotificationPermission = async () => {
+    try {
+      const { status } = await Notifications.requestPermissionsAsync();
+      await setItem('notificationStatus', status);
+			setCurrentPage(1);
+    } catch (error) {
+      console.error('Notification permission error:', error);
+    }
+  };
+
+  const inviteFriends = async () => {
+    try {
+      await Share.share({
+        message: 'Buy my bags! yourlinkhere.com/refer?=123456',
+      });
+      navigateNext();
+    } catch (error) {
+      console.error('Share error:', error);
+    }
+  };
+
+  const createAccount = async () => {
+    router.replace('/(auth)/login');
+  };
+
+	const navigateNext = async () => {
+    try {
+      if (currentPage === 0) {
+        await setItem('notificationStatus', 'skipped');
+      }
+			else if (currentPage === 1) {
+				// can't know if user has invited or not, we don't want to prompt invite again 
+				await setItem('inviteStatus', 'prompted');
 			}
-		}
-		handleNextPage();
-	};
-	
-	const handleInvite = async () => {
-		await Share.share({
-			message: 'Buy my bags! yourlinkhere.com/refer?=' + '123456',
-		});
-		handleNextPage();
-	};
-	
-	async function handleCreateAccount() {
-		router.replace('/(auth)/login');
-	};
-	
-	const handleNextPage = () => {
-		if (currentPage < 2) {
-			setCurrentPage(currentPage + 1);
-		} else {
-			router.replace('/(tabs)');
-		}
-	};
-	
+
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+
+      if (nextPage > 2) {
+        await setItem('hasOnboarded', 'true');
+        router.replace('/(tabs)');
+      }
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
+  };
+
 	const renderContent = () => {
 		switch (currentPage) {
 			case 0:
@@ -78,10 +109,10 @@ export default function Index() {
 						<Text style={styles.description}>
 							Stay updated with the latest news and alerts about your investments.
 						</Text>
-						<TouchableOpacity style={styles.button} onPress={handleNotificationRequest}>
+						<TouchableOpacity style={styles.button} onPress={requestNotificationPermission}>
 							<Text style={styles.buttonText}>Allow Notifications</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.skipButton} onPress={handleNextPage}>
+						<TouchableOpacity style={styles.skipButton} onPress={navigateNext}>
 							<Text style={styles.skipButtonText}>Skip</Text>
 						</TouchableOpacity>
 					</>
@@ -92,12 +123,12 @@ export default function Index() {
 						<Text style={styles.emoji}>🤝</Text>
 						<Text style={styles.title}>Invite Friends</Text>
 						<Text style={styles.description}>
-							Share your referral code with friends and earn rewards!
+							Invite your friends and earn rewards!
 						</Text>
-						<TouchableOpacity style={styles.button} onPress={handleInvite}>
-							<Text style={styles.buttonText}>Share Referral Code</Text>
+						<TouchableOpacity style={styles.button} onPress={inviteFriends}>
+							<Text style={styles.buttonText}>Invite</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.skipButton} onPress={handleNextPage}>
+						<TouchableOpacity style={styles.skipButton} onPress={navigateNext}>
 							<Text style={styles.skipButtonText}>Skip</Text>
 						</TouchableOpacity>
 					</>
@@ -110,11 +141,13 @@ export default function Index() {
 						<Text style={styles.description}>
 							Your email address controls your wallet. We can't access or freeze your holdings, ever.
 						</Text>
-						<TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
+						<TouchableOpacity style={styles.button} onPress={createAccount}>
 							<Text style={styles.buttonText}>Create Account</Text>
 						</TouchableOpacity>
 					</>
 				);
+			default:
+				return null;
 		}
 	};
 	
@@ -126,9 +159,15 @@ export default function Index() {
       </View>
       <View style={styles.footer}>
         <View style={styles.pagination}>
-          <View style={[styles.dot, currentPage === 0 ? styles.activeDot : styles.inactiveDot]} />
-          <View style={[styles.dot, currentPage === 1 ? styles.activeDot : styles.inactiveDot]} />
-          <View style={[styles.dot, currentPage === 2 ? styles.activeDot : styles.inactiveDot]} />
+          {[0, 1, 2].map((page) => (
+            <View
+              key={page}
+              style={[
+                styles.dot,
+                currentPage === page ? styles.activeDot : styles.inactiveDot,
+              ]}
+            />
+          ))}
         </View>
       </View>
     </SafeAreaView>

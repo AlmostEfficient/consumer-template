@@ -64,9 +64,9 @@ magic-link-template
 ├───app
 │   │   +not-found.tsx
 │   │   _layout.tsx
+| 	|   onboarding.tsx
 │   ├───(auth)
 │   │       login.tsx
-│   │       signup.tsx
 │   └───(tabs)
 │           index.tsx
 │           wallet.tsx

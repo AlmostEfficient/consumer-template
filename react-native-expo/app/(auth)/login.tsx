@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Keyboard, TouchableWithoutFeedback, Linking, Alert } from 'react-native';
 import { magic } from '../../config/magic';
 import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setItem } from '../../utils/storage';
 
 export default function EmailInputForm() {
   const router = useRouter();
   const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
@@ -14,35 +15,43 @@ export default function EmailInputForm() {
     inputRef.current?.focus();
   }, []);
 
-  const handleSubmit = async () => {
-    if (email) {
-      try {
-        // const result = await new Promise((resolve, reject) => {
-        //   magic.auth.loginWithEmailOTP({ email })
-        //     .on('done', (result) => resolve(result))
-        //     .on('error', (error) => reject(error))
-        //     .on('closed-by-user', () => reject(new Error('Login cancelled by user')));
-        // });
-  
-				// math random for result
-				const result = Math.random() > 0.5;
-        if (result) {
-          // Login successful, navigate to the next page
-          router.replace('/(tabs)');
-					AsyncStorage.setItem('hasLaunchedBefore', 'true');
-        } else {
-          // Login failed
-          console.error('Login failed');
-          // Handle the failed login (e.g., show an error message to the user)
-					Alert.alert('Login failed', 'Please check your email and try again.');
-        }
-      } catch (error) {
-        console.error('Login error:', error);
-        // Handle the error (e.g., show an error message to the user)
-				Alert.alert('Login failed', 'Please input a valid email and try again.');
-      }
-    }
-  };
+	const handleSubmit = async () => {
+		const normalizedEmail = email.trim().toLowerCase();
+		if (!isValidEmail(normalizedEmail)) {
+			Alert.alert('Invalid Email', 'Please enter a valid email address.');
+			return;
+		}
+
+		if (isLoading) return; // Prevent multiple submissions
+
+		setIsLoading(true);
+		try {
+			const result = await Promise.race([
+				magic.auth.loginWithEmailOTP({ email: normalizedEmail }),
+				new Promise((_, reject) => setTimeout(() => reject(new Error('Login timed out')), 30000))
+			]);
+
+			if (result) {
+				await setItem('hasOnboarded', 'true');
+				router.replace('/(tabs)');
+			} else {
+				Alert.alert('Login Failed', 'Unexpected response from the server.');
+			}
+		} catch (error: any) {
+			console.error('Login error:', error);
+			if (error.message === 'Login cancelled by user') {
+				Alert.alert('Login Cancelled', 'You have cancelled the login process.');
+			} else if (error.message === 'Login timed out') {
+				Alert.alert('Login Timeout', 'The login process took too long. Please try again.');
+			} else if (error.code === 'rate_limit_exceeded') {
+				Alert.alert('Too Many Attempts', 'Please wait a moment before trying again.');
+			} else {
+				Alert.alert('Login Error', 'An error occurred during login. Please try again.');
+			}
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -63,6 +72,7 @@ export default function EmailInputForm() {
           autoCorrect={false}
           onSubmitEditing={handleSubmit}
           returnKeyType="done"
+					editable={!isLoading}
         />
         <Text style={styles.terms}>
           By continuing you're agreeing to our{' '}
@@ -79,6 +89,11 @@ export default function EmailInputForm() {
     </TouchableWithoutFeedback>
   );
 }
+
+const isValidEmail = (email: string) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
 
 const styles = StyleSheet.create({
   container: {

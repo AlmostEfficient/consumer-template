@@ -16,17 +16,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUserMetadata = async () => {
     try {
-			const hasOnboarded = await getItem('hasOnboarded');
-			if (!hasOnboarded) {
-				return;
-			}
-			const cachedMetadata = await getItem('userMetadata');
+      const cachedMetadata = await getItem('userMetadata');
       if (cachedMetadata) {
         setUserMetadata(JSON.parse(cachedMetadata));
       } else {
-        const metadata = await magic.user.getInfo();
-        setUserMetadata(metadata);
-        await setItem('userMetadata', JSON.stringify(metadata));
+        const isLoggedIn = await magic.user.isLoggedIn();
+        if (isLoggedIn) {
+          const metadata = await magic.user.getInfo();
+          setUserMetadata(metadata);
+          setItem('userMetadata', JSON.stringify(metadata));
+        }
       }
     } catch (error) {
       console.error('Error fetching user metadata:', error);

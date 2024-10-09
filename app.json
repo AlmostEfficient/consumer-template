@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react-native-expo",
-    "slug": "react-native-expo",
+    "name": "Solana Consumer Template",
+    "slug": "solana-consumer-template",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

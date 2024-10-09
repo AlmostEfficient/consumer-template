@@ -1,5 +1,3 @@
-// signedUrl.ts
-
 import * as crypto from 'expo-crypto';
 
 interface SignedUrlParams {

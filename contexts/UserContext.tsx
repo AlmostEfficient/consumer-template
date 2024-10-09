@@ -16,7 +16,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchUserMetadata = async () => {
     try {
-      const cachedMetadata = await getItem('userMetadata');
+			const hasOnboarded = await getItem('hasOnboarded');
+			if (!hasOnboarded) {
+				return;
+			}
+			const cachedMetadata = await getItem('userMetadata');
       if (cachedMetadata) {
         setUserMetadata(JSON.parse(cachedMetadata));
       } else {

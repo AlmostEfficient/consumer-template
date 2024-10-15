@@ -9,7 +9,7 @@ SplashScreen.preventAutoHideAsync();
 export default function AppEntry() {
 	const router = useRouter();
 	const [appIsReady, setAppIsReady] = useState(false);
-	const { userMetadata, fetchUserMetadata } = useUser();
+	const { userMetadata, isLoading } = useUser();
 
 	useEffect(() => {
 		const checkOnboardingAndAuth = async () => {
@@ -18,12 +18,7 @@ export default function AppEntry() {
 			if (hasOnboarded !== 'true') {
 				router.replace('/onboarding');
 			} else if (!userMetadata) {
-				await fetchUserMetadata();
-				if (userMetadata) {
-					router.replace('/(tabs)');
-				} else {
-					router.replace('/(auth)/login');
-				}
+				router.replace('/(auth)/login');
 			} else {
 				router.replace('/(tabs)');
 			}
@@ -31,8 +26,10 @@ export default function AppEntry() {
 			setAppIsReady(true);
 		};
 
-		checkOnboardingAndAuth();
-	}, [fetchUserMetadata, userMetadata, router]);
+		if (!isLoading) {
+			checkOnboardingAndAuth();
+		}
+	}, [isLoading, userMetadata, router]);
 
 	useEffect(() => {
 		if (appIsReady) {

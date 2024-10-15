@@ -65,7 +65,13 @@ const Wallet = () => {
         
         <View style={styles.infoContainer}>
           <Text style={styles.label}>Email:</Text>
-          <Text style={styles.value}>{userMetadata.email || 'Not provided'}</Text>
+          <Text style={styles.value}>
+            {userMetadata.email ? 
+              userMetadata.email.replace(/^(.{3})(.*)(@.*)$/, (_, start, middle, end) => 
+                start + '*'.repeat(middle.length) + end
+              ) 
+              : 'Not provided'}
+          </Text>
 					{userMetadata.email && (
 						<TouchableOpacity style={styles.copyButton} onPress={handleUpdateSettings}>
 							<Text style={styles.copyButtonText}>Update Settings</Text>

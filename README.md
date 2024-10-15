@@ -1,6 +1,18 @@
 # consumer-template
 A React Native Expo template for creating consumer apps on solana with ease.
 
+## RADAR HACKTHON NOTES
+- the app is ready to test as it is, no config necessary, simply run:
+```
+git clone https://github.com/AlmostEfficient/consumer-template.git
+cd consumer-template
+bun install
+bun start
+```
+
+what's different?
+- magic.link key and Helius RPC have been hardcoded
+
 ## what's included?
 With a simple git clone, you're ready to go with:  
 - simple signups with email OTPs via [Magic.link](https://magic.link/)  
@@ -12,7 +24,8 @@ With a simple git clone, you're ready to go with:
 
 - [Moonpay](https://www.moonpay.com/en-gb) for on-ramping is in the works
 
-## setup
+## setup & run
+You'll need a magic.link API key and a solana RPC endpoint
 
 ### magic.link
 - [sign up to magic.link](https://dashboard.magic.link/login?startWith=developer)
@@ -23,10 +36,10 @@ With a simple git clone, you're ready to go with:
 ### Solana RPCs
 I recommend https://helius.dev/ 
 
-## Config
+### Config
 Rename .env.example to .env and fill in the values
 
-## Running locally
+### Running locally
 ```bash
 bun install
 bun start

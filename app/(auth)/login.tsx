@@ -1,16 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Keyboard, TouchableWithoutFeedback, Linking, Alert, InteractionManager } from 'react-native';
-import { magic } from '../../config/magic';
+import { View, Text, TextInput, StyleSheet, Keyboard, TouchableWithoutFeedback, Linking, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
-import { setItem } from '../../utils/storage';
-import { useUser } from '../../contexts/UserContext';
+import { useAuth } from '../../contexts/AuthContext';
 
-export default function EmailInputForm() {
+export default function Login() {
 	const router = useRouter();
 	const [email, setEmail] = useState('');
-	const [isLoading, setIsLoading] = useState(false);
 	const inputRef = useRef<TextInput>(null);
-	const { setUserMetadata } = useUser();
+	const { login, isLoading } = useAuth();
 
 	useEffect(() => {
 		// Auto-focus the email input when the component mounts
@@ -24,42 +21,8 @@ export default function EmailInputForm() {
 			return;
 		}
 
-		if (isLoading) return; // Prevent multiple submissions
-
-		setIsLoading(true);
-		try {
-			const result = await Promise.race([
-				magic.auth.loginWithEmailOTP({ email: normalizedEmail }),
-				new Promise((_, reject) => setTimeout(() => reject(new Error('Login timed out')), 60000))
-			]);
-
-			if (result) {
-				router.replace('/(tabs)');
-
-				// Perform non-critical operations after navigation
-				InteractionManager.runAfterInteractions(async () => {
-					const metadata = await magic.user.getInfo();
-					setUserMetadata(metadata);
-					await setItem('userMetadata', JSON.stringify(metadata));
-					await setItem('hasOnboarded', 'true');
-				});
-			} else {
-				Alert.alert('Login Failed', 'Unexpected response from the server.');
-			}
-		} catch (error: any) {
-			console.error('Login error:', error);
-			if (error.message === 'Login cancelled by user') {
-				Alert.alert('Login Cancelled', 'You have cancelled the login process.');
-			} else if (error.message === 'Login timed out') {
-				Alert.alert('Login Timeout', 'The login process took too long. Please try again.');
-			} else if (error.code === 'rate_limit_exceeded') {
-				Alert.alert('Too Many Attempts', 'Please wait a moment before trying again.');
-			} else {
-				Alert.alert('Login Error', 'An error occurred during login. Please try again.');
-			}
-		} finally {
-			setIsLoading(false);
-		}
+		await login(normalizedEmail);
+		router.replace('/(tabs)');
 	};
 
 	return (

@@ -5,10 +5,12 @@ import { useRouter } from 'expo-router';
 import { removeItem } from '../../utils/storage';
 import * as Clipboard from 'expo-clipboard';
 import { useUser } from '../../contexts/UserContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Wallet = () => {
 	const router = useRouter();
 	const { userMetadata } = useUser();
+	const { logout } = useAuth();
 
   const handleCopyAddress = async () => {
     if (userMetadata?.publicAddress) {
@@ -44,14 +46,8 @@ const Wallet = () => {
 	};
 
   const handleLogout = async () => {
-		// immediately redirect to login
+		await logout();
 		router.replace('/(auth)/login');
-
-		// run logout in the background after page navigation animation
-		InteractionManager.runAfterInteractions(() => {
-			magic.user.logout().catch(error => console.error('Error logging out:', error));
-			removeItem('userMetadata');
-		});
   };
 
   if (!userMetadata) {

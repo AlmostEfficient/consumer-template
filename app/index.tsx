@@ -1,39 +1,32 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { getItem, removeItem } from '../utils/storage';
+import { getItem } from '../utils/storage';
 import * as SplashScreen from "expo-splash-screen"
-import { useUser } from '../contexts/UserContext';
-import { magic } from '../config/magic';
+import { useAuth } from '../contexts/AuthContext';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function AppEntry() {
 	const router = useRouter();
 	const [appIsReady, setAppIsReady] = useState(false);
-	const { userMetadata, setUserMetadata, isLoading } = useUser();
+	const { isAuthenticated, isLoading } = useAuth();
 
 	useEffect(() => {
 		const checkOnboardingAndAuth = async () => {
 			const start = performance.now();
 			
-			console.log('')
+			console.log('Checking onboarding and auth status');
 			const hasOnboarded = await getItem('hasOnboarded');
-			const cachedMetadata = await getItem('userMetadata');
 
 			if (hasOnboarded !== 'true') {
 				console.log('No onboarding complete, redirecting to onboarding');
 				router.replace('/onboarding');
-			} else if (!cachedMetadata) {
-				console.log('No cached metadata, redirecting to login');
+			} else if (!isAuthenticated) {
+				console.log('Not authenticated, redirecting to login');
 				router.replace('/(auth)/login');
 			} else {
-				console.log('Cached metadata found, setting in context');
-				setUserMetadata(JSON.parse(cachedMetadata));
+				console.log('Authenticated, redirecting to tabs');
 				router.replace('/(tabs)');
-
-				// Verify login status in the background cuz it takes ~4s
-				// This is an edge case where the login session is expired
-				verifyLoginStatus();
 			}
 
 			setAppIsReady(true);
@@ -44,28 +37,7 @@ export default function AppEntry() {
 		if (!isLoading) {
 			checkOnboardingAndAuth();
 		}
-	}, [isLoading, router, setUserMetadata]);
-
-	const verifyLoginStatus = async () => {
-		try {
-			const start = performance.now();
-			const isLoggedIn = await magic.user.isLoggedIn();
-			const end = performance.now();
-			console.log(`magic.user.isLoggedIn() took ${end - start}ms`);
-
-			if (!isLoggedIn) {
-				console.log('User session invalid, redirecting to login');
-				setUserMetadata(null);
-				await removeItem('userMetadata');
-				router.replace('/(auth)/login');
-			} else {
-				console.log('User session valid');
-				// Optionally refresh metadata here if needed
-			}
-		} catch (error) {
-			console.error('Error verifying login status:', error);
-		}
-	};
+	}, [isLoading, isAuthenticated, router]);
 
 	useEffect(() => {
 		if (appIsReady) {

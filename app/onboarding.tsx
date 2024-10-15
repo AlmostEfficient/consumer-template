@@ -1,56 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Share } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
-import { magic } from '../config/magic';
 import { getItem, setItem } from '../utils/storage';
 
 export default function Index() {
 	const [currentPage, setCurrentPage] = useState(0);
+	const [onboardingInitialized, setOnboardingInitialized] = useState(false);
 	const router = useRouter();
 
-	useEffect(() => {
-		const initializeOnboarding = async (): Promise<void> => {
-			try {
-				const [notificationsPerms, notificationStatus, hasOnboarded, inviteStatus, isLoggedIn] = await Promise.all([
-					Notifications.getPermissionsAsync(),
-					getItem('notificationStatus'),
-					getItem('hasOnboarded'),
-					getItem('inviteStatus'),
-					magic.user.isLoggedIn(),
-				]);
+	const initializeOnboarding = useCallback(async (): Promise<void> => {
+		if (onboardingInitialized) return;
 
-				if (hasOnboarded === 'true') {
-					router.replace('/(auth)/login');
-					return;
-				}
+		try {
+			const [notificationsPerms, notificationStatus, hasOnboarded, inviteStatus] = await Promise.all([
+				Notifications.getPermissionsAsync(),
+				getItem('notificationStatus'),
+				getItem('hasOnboarded'),
+				getItem('inviteStatus')
+			]);
 
-				if (isLoggedIn) {
-					router.replace('/(tabs)');
-					return;
-				}
-
-				// TODO: fetch notificationsPerms during splash screen so there's no delay in page transition
-				if (notificationsPerms.granted === true || notificationStatus !== null) {
-					setCurrentPage(1);
-					return;
-				}
-
-				if (inviteStatus) {
-					setCurrentPage(2);
-					return;
-				}
-
-				setCurrentPage(0);
-			} catch (error) {
-				console.error('Initialization error:', error);
+			if (hasOnboarded === 'true') {
+				router.replace('/(auth)/login');
+				return;
 			}
-		};
 
+			// TODO: fetch notificationsPerms during splash screen so there's no delay in page transition
+			if (notificationsPerms.granted === true || notificationStatus !== null) {
+				setCurrentPage(1);
+			} else if (inviteStatus) {
+				setCurrentPage(2);
+			} else {
+				setCurrentPage(0);
+			}
+
+			setOnboardingInitialized(true);
+		} catch (error) {
+			console.error('Initialization error:', error);
+		}
+	}, [router, onboardingInitialized]);
+
+	useEffect(() => {
 		initializeOnboarding();
-	}, [router]);
-
+	}, [initializeOnboarding]);
 
 	const requestNotificationPermission = async () => {
 		try {
@@ -81,16 +74,14 @@ export default function Index() {
 		try {
 			if (currentPage === 0) {
 				await setItem('notificationStatus', 'skipped');
+				setCurrentPage(1);
 			}
 			else if (currentPage === 1) {
 				// can't know if user has invited or not, we don't want to prompt invite again 
 				await setItem('inviteStatus', 'prompted');
+				setCurrentPage(2);
 			}
-
-			const nextPage = currentPage + 1;
-			setCurrentPage(nextPage);
-
-			if (nextPage > 2) {
+			else if (currentPage === 2) {
 				await setItem('hasOnboarded', 'true');
 				router.replace('/(tabs)');
 			}

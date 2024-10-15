@@ -1,21 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Keyboard, TouchableWithoutFeedback, Linking, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Keyboard, TouchableWithoutFeedback, Linking, Alert, InteractionManager } from 'react-native';
 import { magic } from '../../config/magic';
 import { useRouter } from 'expo-router';
 import { setItem } from '../../utils/storage';
+import { useUser } from '../../contexts/UserContext';
 
 export default function EmailInputForm() {
 	const router = useRouter();
 	const [email, setEmail] = useState('');
 	const [isLoading, setIsLoading] = useState(false);
 	const inputRef = useRef<TextInput>(null);
+	const { setUserMetadata } = useUser();
 
 	useEffect(() => {
 		// Auto-focus the email input when the component mounts
 		inputRef.current?.focus();
 	}, []);
 
-	const handleSubmit = async () => {
+	const handleLogin = async () => {
 		const normalizedEmail = email.trim().toLowerCase();
 		if (!isValidEmail(normalizedEmail)) {
 			Alert.alert('Invalid Email', 'Please enter a valid email address.');
@@ -28,12 +30,19 @@ export default function EmailInputForm() {
 		try {
 			const result = await Promise.race([
 				magic.auth.loginWithEmailOTP({ email: normalizedEmail }),
-				new Promise((_, reject) => setTimeout(() => reject(new Error('Login timed out')), 30000))
+				new Promise((_, reject) => setTimeout(() => reject(new Error('Login timed out')), 60000))
 			]);
 
 			if (result) {
-				await setItem('hasOnboarded', 'true');
 				router.replace('/(tabs)');
+
+				// Perform non-critical operations after navigation
+				InteractionManager.runAfterInteractions(async () => {
+					const metadata = await magic.user.getInfo();
+					setUserMetadata(metadata);
+					await setItem('userMetadata', JSON.stringify(metadata));
+					await setItem('hasOnboarded', 'true');
+				});
 			} else {
 				Alert.alert('Login Failed', 'Unexpected response from the server.');
 			}
@@ -71,7 +80,7 @@ export default function EmailInputForm() {
 					keyboardType="email-address"
 					autoCapitalize="none"
 					autoCorrect={false}
-					onSubmitEditing={handleSubmit}
+					onSubmitEditing={handleLogin}
 					returnKeyType="done"
 					editable={!isLoading}
 				/>

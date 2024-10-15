@@ -1,51 +1,21 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { getItem, setItem } from '../utils/storage';
-import { magic } from '../config/magic';
+import React, { createContext, useState, useContext } from 'react';
 import { MagicUserMetadata } from '@magic-sdk/types';
 
 interface UserContextType {
   userMetadata: MagicUserMetadata | null;
   setUserMetadata: React.Dispatch<React.SetStateAction<MagicUserMetadata | null>>;
-  fetchUserMetadata: () => Promise<void>;
   isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [userMetadata, setUserMetadata] = useState<MagicUserMetadata | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchUserMetadata = async () => {
-    setIsLoading(true);
-    try {
-      const cachedMetadata = await getItem('userMetadata');
-      if (cachedMetadata) {
-        setUserMetadata(JSON.parse(cachedMetadata));
-      } else {
-        const isLoggedIn = await magic.user.isLoggedIn();
-        if (isLoggedIn) {
-          const metadata = await magic.user.getInfo();
-          setUserMetadata(metadata);
-          setItem('userMetadata', JSON.stringify(metadata));
-        } else {
-          setUserMetadata(null);
-        }
-      }
-    } catch (error) {
-      setUserMetadata(null);
-			console.log('error fetching user metadata', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserMetadata();
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <UserContext.Provider value={{ userMetadata, setUserMetadata, fetchUserMetadata, isLoading }}>
+    <UserContext.Provider value={{ userMetadata, setUserMetadata, isLoading, setIsLoading }}>
       {children}
     </UserContext.Provider>
   );

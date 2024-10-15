@@ -33,6 +33,7 @@ bun start
 ```
 Scan the QR code printed in the console with [Expo Go](https://expo.dev/go) (Android) or the Camera app (iOS) (you need to have expo go installed). 
 
+
 #### Project Structure
 I use this for telling LLMs how stuff is structured so they can be more accurate in their responses. You can regenerate this on Windows with this command:
 ```bash
@@ -74,10 +75,6 @@ magic-link-template
 │           adaptive-icon.png
 │           favicon.png
 │           icon.png
-│           partial-react-logo.png
-│           react-logo.png
-│           react-logo@2x.png
-│           react-logo@3x.png
 │           splash.png
 │
 ├───components

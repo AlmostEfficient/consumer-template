@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, InteractionManager } from 'react-native';
 import { magic } from '../../config/magic';
 import { useRouter } from 'expo-router';
 import { removeItem } from '../../utils/storage';
@@ -44,14 +44,14 @@ const Wallet = () => {
 	};
 
   const handleLogout = async () => {
-    try {
-      await magic.user.logout();
-      // Clear the cached metadata on logout
-      await removeItem('userMetadata');
-      router.replace('/(auth)/login');
-    } catch (error) {
-      console.error('Error logging out:', error);
-    }
+		// immediately redirect to login
+		router.replace('/(auth)/login');
+
+		// run logout in the background after page navigation animation
+		InteractionManager.runAfterInteractions(() => {
+			magic.user.logout().catch(error => console.error('Error logging out:', error));
+			removeItem('userMetadata');
+		});
   };
 
   if (!userMetadata) {

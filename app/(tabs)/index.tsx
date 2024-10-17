@@ -3,13 +3,14 @@ import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 import { useUser } from '../../contexts/UserContext';
 import { signAndSendTransaction, createTransferInstruction } from '../../utils/signAndSendTx';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { MoonPayWebView } from '../../components/MoonPayWebView';
-import { useMoonPayLauncher } from '../../hooks/useMoonPayLauncher';
+// Enable only if you've added the Moonpay API key to the .env file
+// import { MoonPayWebView } from '../../components/MoonPayWebView';
+// import { useMoonPayLauncher } from '../../hooks/useMoonPayLauncher';
 
 export default function Index() {
 	const { userMetadata } = useUser();
 	const [isLoading, setIsLoading] = useState(false);
-	const { launchMoonPay, ready: moonPayReady } = useMoonPayLauncher();
+	// const { launchMoonPay, ready: moonPayReady } = useMoonPayLauncher();
 
 	const sendTransaction = async () => {
 		setIsLoading(true);
@@ -45,9 +46,10 @@ export default function Index() {
         onPress={sendTransaction}
         disabled={isLoading}
       />
-			{/* THIS JUST RETURNS A BLANK VIEW */}
+			{/* THIS JUST RETURNS A BLANK VIEW RIGHT NOW */}
       {/* <MoonPayWebView /> */}
-      <Button onPress={launchMoonPay} title="Open MoonPay" disabled={!moonPayReady} />
+
+      {/* <Button onPress={launchMoonPay} title="Open MoonPay" disabled={!moonPayReady} /> */}
     </View>
   );
 }

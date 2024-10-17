@@ -21,8 +21,8 @@ With a simple git clone, you're ready to go with:
 - web3.js setup for onchain actions  
 - onboarding that handles notifications and invites  
 - snappy UI with native apps for iOS and Android  
+- [Moonpay](https://www.moonpay.com/en-gb) for on-ramping (webview in progress, browser works)
 
-- [Moonpay](https://www.moonpay.com/en-gb) for on-ramping is in the works
 
 ## setup & run
 You'll need a magic.link API key and a solana RPC endpoint

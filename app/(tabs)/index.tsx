@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Button, StyleSheet, Alert } from 'react-native';
 import { useUser } from '../../contexts/UserContext';
 import { signAndSendTransaction, createTransferInstruction } from '../../utils/signAndSendTx';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { MoonPayWebView } from '../../components/MoonPayWebView';
+import { useMoonPayLauncher } from '../../hooks/useMoonPayLauncher';
 
 export default function Index() {
 	const { userMetadata } = useUser();
-  const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const { launchMoonPay, ready: moonPayReady } = useMoonPayLauncher();
 
 	const sendTransaction = async () => {
 		setIsLoading(true);
@@ -34,8 +37,7 @@ export default function Index() {
 		}
 	};
 
-
-  return (
+	return (
     <View style={styles.container}>
       <Text style={styles.title}>Solana Transaction test</Text>
       <Button
@@ -43,6 +45,9 @@ export default function Index() {
         onPress={sendTransaction}
         disabled={isLoading}
       />
+			{/* THIS JUST RETURNS A BLANK VIEW */}
+      {/* <MoonPayWebView /> */}
+      <Button onPress={launchMoonPay} title="Open MoonPay" disabled={!moonPayReady} />
     </View>
   );
 }

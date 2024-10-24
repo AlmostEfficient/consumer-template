@@ -1,21 +1,16 @@
 # consumer-template
 A React Native Expo template for creating consumer apps on solana with ease.
 
-## RADAR HACKTHON NOTES
-- the app is ready to test as it is, no config necessary, simply run:
-```
-git clone https://github.com/AlmostEfficient/consumer-template.git
-cd consumer-template
-bun install
-bun start
-```
+## capsule integration
+This branch is currently undergoing migration from magic.link to capsule. only switch to this if you know what you're doing.
 
-what's different?
-- magic.link key and Helius RPC have been hardcoded
+### current status
+- completed all setup steps from the docs
+- ` ERROR  TypeError: Cannot read property 'modPow' of null, js engine: hermes` cuz of shim in app/_layout.tsx
 
 ## what's included?
 With a simple git clone, you're ready to go with:  
-- simple signups with email OTPs via [Magic.link](https://magic.link/)  
+- simple signups with email OTPs via https://usecapsule.com/  
 - invisible non-custodial wallets  
 - secure private key exports  
 - web3.js setup for onchain actions  
@@ -25,12 +20,11 @@ With a simple git clone, you're ready to go with:
 
 
 ## setup & run
-You'll need a magic.link API key and a solana RPC endpoint
+You'll need a capsule API key and a solana RPC endpoint
 
-### magic.link
-- [sign up to magic.link](https://dashboard.magic.link/login?startWith=developer)
+### capsule
+- [sign up to capsule](https://www.usecapsule.com/)
 - create new app
-- network: solana mainnet/devnet
 - copy the publishable api key
 
 ### Solana RPCs

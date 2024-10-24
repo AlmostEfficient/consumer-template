@@ -13,9 +13,37 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+			"bundleIdentifier": "com.usecapsule.template.expo",
+			"associatedDomains": [
+        "webcredentials:app.beta.usecapsule.com?mode=developer",
+        "webcredentials:app.usecapsule.com"
+			],
       "supportsTablet": true
     },
     "android": {
+			"package": "com.usecapsule.template.expo",
+			"intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "app.beta.usecapsule.com",
+              "pathPrefix": "/.well-known/assetlinks.json"
+            },
+            {
+              "scheme": "https",
+              "host": "app.usecapsule.com",
+              "pathPrefix": "/.well-known/assetlinks.json"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

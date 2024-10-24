@@ -50,6 +50,11 @@ Scan the QR code printed in the console with [Expo Go](https://expo.dev/go) (And
 - we don't validate login state via SDK anywhere cuz it takes too long, if the DID is expired, stuff will break
 -
 
+## Publishing to app stores
+**Android:**  
+- Create a [Play Console developer account](https://play.google.com/apps/publish/signup) (for yourself or via your company)
+- 
+
 #### Project Structure
 I use this for telling LLMs how stuff is structured so they can be more accurate in their responses. You can regenerate this on Windows with this command:
 ```bash

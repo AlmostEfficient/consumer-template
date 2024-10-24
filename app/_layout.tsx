@@ -4,12 +4,15 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { magic } from "../config/magic";
 import { UserProvider } from "../contexts/UserContext";
 import { AuthProvider } from "../contexts/AuthContext";
+// import "../shim";
+import PolyfillCrypto from 'react-native-webview-crypto';
 
 export default function RootLayout() {
 	return (
 		<SafeAreaProvider>
 			<UserProvider>
 				<AuthProvider>
+					<PolyfillCrypto />
 					<magic.Relayer />
 					<Stack screenOptions={{ headerShown: false }}>
 						<Stack.Screen name="(tabs)" />

@@ -31,7 +31,7 @@ export const createMoonPaySdkConfig = (publicAddress: string): MoonPayCoreSdkCon
 	params: {
 		apiKey: moonpayApiKey,
 		currencyCode: 'sol',
-		baseCurrencyCode: 'sol',
+		baseCurrencyCode: 'usd',
 		walletAddress: publicAddress,
 		language: 'en',
 	},

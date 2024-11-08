@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, InteractionManager } from 'react-native';
 import { magic } from '../../config/magic';
 import { useRouter } from 'expo-router';
-import { removeItem } from '../../utils/storage';
 import * as Clipboard from 'expo-clipboard';
 import { useUser } from '../../contexts/UserContext';
 import { useAuth } from '../../contexts/AuthContext';
@@ -49,6 +48,10 @@ const Wallet = () => {
 		await logout();
 		router.replace('/(auth)/login');
   };
+
+	const handleOpenMoonPay = () => {
+		router.push('../MoonPayScreen');
+	};
 
   if (!userMetadata) {
     return <Text style={styles.loadingText}>Loading...</Text>;
@@ -102,12 +105,15 @@ const Wallet = () => {
           </Text>
         </View>
 
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>Logout</Text>
-        </TouchableOpacity>
+				<TouchableOpacity style={styles.logoutButton} onPress={handleOpenMoonPay}>
+					<Text style={styles.logoutButtonText}>Buy SOL</Text>
+				</TouchableOpacity>
 				<TouchableOpacity style={styles.logoutButton} onPress={handleExportPrivateKey}>
 					<Text style={styles.logoutButtonText}>Export Private Key</Text>
 				</TouchableOpacity>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

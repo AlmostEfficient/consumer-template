@@ -43,7 +43,16 @@ Scan the QR code printed in the console with [Expo Go](https://expo.dev/go) (And
 
 #### Known issues
 - we don't validate login state via SDK anywhere cuz it takes too long, if the DID is expired, stuff will break
--
+- have not cleaned up expo generated files
+- styles are in each component instead of a theme
+
+#### clean up before deploying
+I've included a bunch of extra stuff you might not need.
+
+- remove reference-code folder
+- uninstall unused packages
+
+TODO: make script that does all this
 
 #### Project Structure
 I use this for telling LLMs how stuff is structured so they can be more accurate in their responses. You can regenerate this on Windows with this command:

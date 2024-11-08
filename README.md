@@ -1,18 +1,6 @@
 # consumer-template
 A React Native Expo template for creating consumer apps on solana with ease.
 
-## RADAR HACKTHON NOTES
-- the app is ready to test as it is, no config necessary, simply run:
-```
-git clone https://github.com/AlmostEfficient/consumer-template.git
-cd consumer-template
-bun install
-bun start
-```
-
-what's different?
-- magic.link key and Helius RPC have been hardcoded
-
 ## what's included?
 With a simple git clone, you're ready to go with:  
 - simple signups with email OTPs via [Magic.link](https://magic.link/)  
@@ -21,11 +9,13 @@ With a simple git clone, you're ready to go with:
 - web3.js setup for onchain actions  
 - onboarding that handles notifications and invites  
 - snappy UI with native apps for iOS and Android  
-- [Moonpay](https://www.moonpay.com/en-gb) for on-ramping (webview in progress, browser works)
-
+- [Moonpay](https://www.moonpay.com/en-gb) for on-ramping (webview by default)
 
 ## setup & run
-You'll need a magic.link API key and a solana RPC endpoint
+You'll need: 
+- a magic.link API key
+- a solana RPC endpoint
+- a moonpay API key
 
 ### magic.link
 - [sign up to magic.link](https://dashboard.magic.link/login?startWith=developer)
@@ -34,7 +24,12 @@ You'll need a magic.link API key and a solana RPC endpoint
 - copy the publishable api key
 
 ### Solana RPCs
-I recommend https://helius.dev/ 
+I recommend https://helius.dev/ (sponsor me pls)
+
+### Moonpay
+- [sign up to moonpay](https://dashboard.moonpay.com/signup)
+- create new app
+- get keys from https://dashboard.moonpay.com/v2/developers
 
 ### Config
 Rename .env.example to .env and fill in the values

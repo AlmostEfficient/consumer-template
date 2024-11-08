@@ -1,7 +1,7 @@
 {
-  "name": "react-native-expo",
+  "name": "solana-consumer-template",
   "main": "expo-router/entry",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",

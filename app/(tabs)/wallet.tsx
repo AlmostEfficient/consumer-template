@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, InteractionManager } from 'react-native';
-import { magic } from '../../config/magic';
+import { magic } from '@/config/magic';
 import { useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
-import { useUser } from '../../contexts/UserContext';
-import { useAuth } from '../../contexts/AuthContext';
+import { useUser } from '@/contexts/UserContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Wallet = () => {
 	const router = useRouter();

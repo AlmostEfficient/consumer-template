@@ -1,8 +1,8 @@
 import { View, StyleSheet, SafeAreaView } from 'react-native';
 import { useMoonPaySdk } from '@moonpay/react-native-moonpay-sdk';
 import { useEffect, useState } from 'react';
-import { createMoonPaySdkConfig, generateAndSignUrl } from '../config/moonpay';
-import { useUser } from '../contexts/UserContext';
+import { createMoonPaySdkConfig, generateAndSignUrl } from '@/config/moonpay';
+import { useUser } from '@/contexts/UserContext';
 import { Stack } from 'expo-router';
 
 export default function MoonPayScreen() {

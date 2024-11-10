@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { getItem } from '../utils/storage';
 import * as SplashScreen from "expo-splash-screen"
-import { useAuth } from '../contexts/AuthContext';
+import { getItem } from '@/utils/storage';
+import { useAuth } from '@/contexts/AuthContext';
 
 SplashScreen.preventAutoHideAsync();
 

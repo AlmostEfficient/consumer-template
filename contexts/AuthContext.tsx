@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { magic } from '../config/magic';
-import { getItem, setItem, removeItem } from '../utils/storage';
-import { useUser } from './UserContext';
+import { magic } from '@/config/magic';
+import { getItem, setItem, removeItem } from '@/utils/storage';
+import { useUser } from '@/contexts/UserContext';
 import { Alert, InteractionManager } from 'react-native';
 
 interface AuthContextType {

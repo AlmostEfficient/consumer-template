@@ -11,16 +11,16 @@
 
 import { useMoonPaySdk } from '@moonpay/react-native-moonpay-sdk';
 import { useCallback } from 'react';
-import * as WebBrowser from 'expo-web-browser';
-import { createMoonPaySdkConfig } from '../../config/moonpay';
-import { useUser } from '../../contexts/UserContext';
+import { openBrowserAsync} from 'expo-web-browser';
+import { createMoonPaySdkConfig } from '@/config/moonpay';
+import { useUser } from '@/contexts/UserContext';
 
 export function useMoonPayLauncher() {
 	const { userMetadata } = useUser();
 	const sdkConfig = createMoonPaySdkConfig(userMetadata?.publicAddress || '');
 
 	const handleOpenBrowser = async (url: string) => {
-		await WebBrowser.openBrowserAsync(url);
+		await openBrowserAsync(url);
 	};
 
 	const { ready, openWithInAppBrowser } = useMoonPaySdk({

@@ -1,4 +1,4 @@
-import { generateSignature } from '../utils/signUrl';
+import { generateSignature } from '@/utils/signUrl';
 
 export const moonpayApiKey = process.env.EXPO_PUBLIC_MOONPAY_API_KEY || '';
 

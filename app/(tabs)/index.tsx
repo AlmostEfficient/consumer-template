@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Button, StyleSheet, Alert } from 'react-native';
-import { useUser } from '../../contexts/UserContext';
-import { signAndSendTransaction, createTransferInstruction } from '../../utils/signAndSendTx';
+import { useUser } from '@/contexts/UserContext';
+import { signAndSendTransaction, createTransferInstruction } from '@/utils/signAndSendTx';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 export default function Index() {

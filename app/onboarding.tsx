@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Share } from 'r
 import { StatusBar } from 'expo-status-bar';
 import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
-import { getItem, setItem } from '../utils/storage';
+import { getItem, setItem } from '@/utils/storage';
 
 export default function Index() {
 	const [currentPage, setCurrentPage] = useState(0);

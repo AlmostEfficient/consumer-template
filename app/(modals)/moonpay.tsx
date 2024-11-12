@@ -3,9 +3,8 @@ import { useMoonPaySdk } from '@moonpay/react-native-moonpay-sdk';
 import { useEffect, useState } from 'react';
 import { createMoonPaySdkConfig, generateAndSignUrl } from '@/config/moonpay';
 import { useUser } from '@/contexts/UserContext';
-import { Stack } from 'expo-router';
 
-export default function MoonPayScreen() {
+export default function MoonPay() {
   const { userMetadata } = useUser();
   const [signature, setSignature] = useState<string | null>(null);
 
@@ -28,20 +27,11 @@ export default function MoonPayScreen() {
   if (!ready) return null;
 
   return (
-    <>
-      <Stack.Screen 
-        options={{
-          title: 'Deposit',
-          headerShown: true,
-          presentation: 'modal',
-        }} 
-      />
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <MoonPayWebViewComponent style={styles.webview} />
-        </View>
-      </SafeAreaView>
-    </>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <MoonPayWebViewComponent style={styles.webview} />
+      </View>
+    </SafeAreaView>
   );
 }
 

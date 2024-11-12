@@ -50,7 +50,7 @@ const Wallet = () => {
   };
 
 	const handleOpenMoonPay = () => {
-		router.push('../MoonPayScreen');
+		router.push('/(modals)/moonpay');
 	};
 
   if (!userMetadata) {
